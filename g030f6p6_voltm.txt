@@ -1,0 +1,74 @@
+Configuration	g030f6p6_voltm
+STM32CubeMX 	6.13.0
+Date	03/05/2025
+MCU	STM32G030F6Px
+
+
+
+PERIPHERALS	MODES	FUNCTIONS	PINS
+ADC1	IN0	ADC1_IN0	PA0
+ADC1	IN1	ADC1_IN1	PA1
+I2C1	I2C	I2C1_SCL	PB6
+I2C1	I2C	I2C1_SDA	PB7
+SYS	Serial Wire	SYS_SWCLK	PA14-BOOT0
+SYS	Serial Wire	SYS_SWDIO	PA13
+SYS	SysTick	SYS_VS_Systick	VP_SYS_VS_Systick
+
+
+
+Pin Nb	PINs	FUNCTIONs	LABELs
+1	PB7	I2C1_SDA	
+7	PA0	ADC1_IN0	
+8	PA1	ADC1_IN1	
+9	PA2	GPIO_Output	PA2OUT
+10	PA3	GPIO_Output	PA3OUT
+18	PA13	SYS_SWDIO	
+19	PA14-BOOT0	SYS_SWCLK	
+20	PB6	I2C1_SCL	
+PERIPHERALS	MODES	FUNCTIONS	PINS
+ADC1	IN0	ADC1_IN0	PA0
+ADC1	IN1	ADC1_IN1	PA1
+I2C1	I2C	I2C1_SCL	PB6
+I2C1	I2C	I2C1_SDA	PB7
+SYS	Serial Wire	SYS_SWCLK	PA14-BOOT0
+SYS	Serial Wire	SYS_SWDIO	PA13
+SYS	SysTick	SYS_VS_Systick	VP_SYS_VS_Systick
+
+
+
+Pin Nb	PINs	FUNCTIONs	LABELs
+1	PB7	I2C1_SDA	
+7	PA0	ADC1_IN0	
+8	PA1	ADC1_IN1	
+9	PA2	GPIO_Output	PA2OUT
+10	PA3	GPIO_Output	PA3OUT
+18	PA13	SYS_SWDIO	
+19	PA14-BOOT0	SYS_SWCLK	
+20	PB6	I2C1_SCL	
+
+
+
+SOFTWARE PROJECT
+
+Project Settings : 
+Project Name : g030f6p6_voltm
+Project Folder : /Users/ashok/Documents/STM32CubeIDE/workspace_1.14.0/g030f6p6_voltm
+Toolchain / IDE : STM32CubeIDE
+Firmware Package Name and Version : STM32Cube FW_G0 V1.6.2
+
+
+Code Generation Settings : 
+STM32Cube MCU packages and embedded software packs : Copy only the necessary library files
+Generate peripheral initialization as a pair of '.c/.h' files per peripheral : No
+Backup previously generated files when re-generating : No
+Delete previously generated files when not re-generated : Yes
+Set all free pins as analog (to optimize the power consumption) : No
+
+
+Toolchains Settings : 
+Compiler Optimizations : 
+
+
+
+
+
