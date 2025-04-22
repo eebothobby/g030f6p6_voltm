@@ -17,10 +17,11 @@
   *
   * Code for a 2-channel (PA0, PA1) voltmeter using an STM32G030F6P6 cpu's ADC.
   *
-  * The measurement (in millivolts) is displayed on a SSD1306-based I2C display.
-  * We use millivolts  instead of volts for simplicity. Due to the small
-  * size of the flash memory (32K), floating point printf formatting code
-  * results in the code not fitting in flash.
+  * The measurement (in volts) is displayed on a SSD1306-based I2C display.
+  * Due to the small size of the flash memory (32K), floating point printf
+  * formatting code results in the code not fitting in flash, so we calculate
+  * the integer and fractional part separately and print them with a dot between
+  * them.
   *
   * In order to measure voltages higher than the 3.3V reference, each channel
   * the board has a voltage divider (51K/(51K + 200K)) enabled by a MOSFET that
@@ -75,8 +76,9 @@ uint8_t fi2cadr = 0;
 // We use millivolts instead of a floating point number for volts
 // because including code to support printing floating point numbers
 // exceeds the flash size.
-uint32_t millivolts[2];
+uint16_t millivolts[2];
 float scale[2]; // Scaling factor based on the status of the PA2, PA3 pins
+GPIO_PinState pinstate[2];
 
 
 /* USER CODE END PV */
@@ -95,11 +97,16 @@ static void MX_I2C1_Init(void);
 /* USER CODE BEGIN 0 */
 
 // display data on SSD1306 screen
-// #define _BIG_DISP
+// _BIG_DISP is used for 0.96" 128x64 screen
+// otherwise a 0.49" 64x32 screen is used
+// Note that we don't use %f for the sprintf because enabling floating point
+// formats in the code causes the code size to increase beyond the flash size.
+//#define _BIG_DISP
 #ifdef _BIG_DISP
 void display() {
 	char buf[20];
 	uint8_t rpix = 0, rht = 12;
+	uint16_t volts, mvolts;
 
 	 // row 0
 	 ssd1306_SetCursor(0, rpix);
@@ -110,13 +117,17 @@ void display() {
 	 rht = 20;
 
 	 ssd1306_SetCursor(0, rpix);
-	 sprintf(buf, "0: %5lu mV", millivolts[0]);
+	 volts = millivolts[0] / 1000;
+	 mvolts = millivolts[0] % 1000;
+	 sprintf(buf, "0:%2u.%03u", volts, mvolts);
 	 ssd1306_WriteString(buf , Font_11x18, White);
 
 	 rpix += rht; // row 2
 
 	 ssd1306_SetCursor(0, rpix);
-	 sprintf(buf, "1: %5lu mV", millivolts[1]);
+	 volts = millivolts[1] / 1000;
+	 mvolts = millivolts[1] % 1000;
+	 sprintf(buf, "1:%2u.%03u", volts, mvolts);
 	 ssd1306_WriteString(buf , Font_11x18, White);
 
 	 ssd1306_UpdateScreen(&hi2c1);
@@ -125,17 +136,22 @@ void display() {
 void display() {
 	char buf[20];
 	uint8_t rpix = 32, rht = 12;
+	uint16_t volts, mvolts;
 
 	 // row 0
 	 ssd1306_SetCursor(32, rpix);
-	 sprintf(buf, "0:%5lu m", millivolts[0]);
+	 volts = millivolts[0] / 1000;
+	 mvolts = millivolts[0] % 1000;
+	 sprintf(buf, "0:%2u.%03u", volts, mvolts);
 	 ssd1306_WriteString(buf , Font_7x10, White);
 
 	 rpix += rht;
 
 	 // row 1
 	 ssd1306_SetCursor(32, rpix);
-	 sprintf(buf, "1:%5lu m", millivolts[1]);
+	 volts = millivolts[1] / 1000;
+	 mvolts = millivolts[1] % 1000;
+	 sprintf(buf, "1:%2u.%03u", volts, mvolts);
 	 ssd1306_WriteString(buf , Font_7x10, White);
 
 	 ssd1306_UpdateScreen(&hi2c1);
@@ -143,6 +159,7 @@ void display() {
 #endif // _BIG_DISP
 
 void setScale(int chan, GPIO_PinState st) {
+	pinstate[chan] = st;
 	if (chan == 0) {
 		HAL_GPIO_WritePin(PA2OUT_GPIO_Port, PA2OUT_Pin, st);
 	} else {
@@ -221,9 +238,9 @@ int main(void)
   while (1)
   {
 	  for (int i = 0; i < 2; i++) {
-		  if (adcvals[i] > 65000) {
+		  if ((adcvals[i] > 65000) && (pinstate[i] == GPIO_PIN_RESET)) {
 			  setScale(i, GPIO_PIN_SET);
-		  } else if (adcvals[i] < 13000) {
+		  } else if ((adcvals[i] < 13000) && (pinstate[i] == GPIO_PIN_SET)) {
 			  setScale(i, GPIO_PIN_RESET);
 		  }
 	  }
@@ -232,8 +249,6 @@ int main(void)
 		  millivolts[i] = adcvals[i] * scale[i];
 	  }
 	  display();
-
-	  HAL_Delay(100);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
