@@ -21,3 +21,8 @@ However, I made several changes to make the design better suited for my needs.
 5. I use a more widely available STM32G030F6P6 microcontroller instead of a CH32 microcontroller.
    The ADCs on the STM32G030 have 12-bit resolution that I increase to 16 bits by 16x oversampling, resulting in
    better resolution.  I use DMA to read the ADC data into memory.
+
+   Here is a photo showing the front and back fo the board:
+   
+   ![STM32G030 breadboard voltmenter](voltm_photo.jpg)
+   
