@@ -23,6 +23,6 @@ However, I made several changes to make the design better suited for my needs.
    better resolution.  I use DMA to read the ADC data into memory.
 
    Here is a photo showing the front and back fo the board:
-   
-   ![STM32G030 breadboard voltmenter](voltm_photo.jpg)
+
+![STM32G030 breadboard voltmeter](./voltm_photo.jpeg)
    
